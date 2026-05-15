@@ -1,0 +1,23 @@
+# Neovim cache/loggar
+plugin/
+pack/
+sessions/
+session/
+
+# lazy.nvim
+.lazy/
+
+# Mason binaries
+mason/
+
+# Swap/backup
+*.swp
+*.swo
+*~
+
+# OS-filer
+.DS_Store
+Thumbs.db
+
+# Local overrides
+lua/local.lua
