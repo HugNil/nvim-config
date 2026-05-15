@@ -8,6 +8,7 @@ vim.pack.add({
 	"https://www.github.com/echasnovski/mini.nvim",
 	"https://www.github.com/ibhagwan/fzf-lua",
 	"https://www.github.com/nvim-tree/nvim-tree.lua",
+	"https://www.github.com/nvim-tree/nvim-web-devicons",
 	"https://github.com/EdenEast/nightfox.nvim",
 	{
 		src = "https://github.com/nvim-treesitter/nvim-treesitter",
@@ -541,6 +542,10 @@ end
 
 setup_obsidian()
 
+require("nvim-web-devicons").setup({
+	default = true,
+})
+
 require("nvim-tree").setup({
 	view = {
 		width = 35,
@@ -550,6 +555,24 @@ require("nvim-tree").setup({
 	},
 	renderer = {
 		group_empty = true,
+		icons = {
+			show = {
+				file = true,
+				folder = true,
+				folder_arrow = true,
+				git = true,
+			},
+			web_devicons = {
+				file = {
+					enable = true,
+					color = true,
+				},
+				folder = {
+					enable = true,
+					color = true,
+				},
+			},
+		},
 	},
 })
 
@@ -567,6 +590,10 @@ vim.api.nvim_set_hl(0, "NvimTreeEndOfBuffer", { bg = "none" })
 vim.env.FZF_DEFAULT_COMMAND = "rg --files --hidden --follow -g !.git"
 
 require("fzf-lua").setup({
+	defaults = {
+		file_icons = "devicons",
+		color_icons = true,
+	},
 	files = {
 		cmd = "rg --files --hidden --follow -g !.git",
 	},
@@ -606,7 +633,6 @@ require("mini.pairs").setup({})
 require("mini.trailspace").setup({})
 require("mini.bufremove").setup({})
 require("mini.notify").setup({})
-require("mini.icons").setup({})
 
 require("gitsigns").setup({
 	signs = {
