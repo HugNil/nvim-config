@@ -130,6 +130,7 @@ vim.opt.foldlevel = 99
 
 vim.opt.splitbelow = true
 vim.opt.splitright = true
+vim.opt.equalalways = false
 
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest:full,full"
@@ -369,6 +370,88 @@ vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], {
 -- ============================================================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
 
+vim.opt.splitright = true
+
+local layout_terminal_width = 60
+local layout_code_width = 118
+local layout_tree_width = 30
+
+local function is_floating_win(win)
+	return vim.api.nvim_win_get_config(win).relative ~= ""
+end
+
+local function is_tree_win(win)
+	local buf = vim.api.nvim_win_get_buf(win)
+	return vim.bo[buf].filetype == "NvimTree"
+end
+
+local function is_terminal_win(win)
+	local buf = vim.api.nvim_win_get_buf(win)
+	return vim.bo[buf].buftype == "terminal"
+end
+
+local function find_code_win()
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		if not is_floating_win(win) and not is_tree_win(win) and not is_terminal_win(win) then
+			return win
+		end
+	end
+end
+
+local function resize_startup_layout()
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		if not is_floating_win(win) then
+			if is_tree_win(win) then
+				vim.api.nvim_win_set_width(win, layout_tree_width)
+				vim.wo[win].winfixwidth = true
+			elseif is_terminal_win(win) then
+				vim.api.nvim_win_set_width(win, layout_terminal_width)
+				vim.wo[win].winfixwidth = true
+			elseif not is_tree_win(win) then
+				vim.api.nvim_win_set_width(win, layout_code_width)
+			end
+		end
+	end
+end
+
+vim.api.nvim_create_autocmd("VimEnter", {
+	callback = function()
+		vim.schedule(function()
+
+			if vim.fn.argc() == 0 then
+				vim.cmd("enew")
+			end
+			vim.wo.colorcolumn = "140"
+
+			-- spara kodfönstret så filer från trädet öppnas här senare
+			local main_win = vim.api.nvim_get_current_win()
+
+			-- öppna tree
+			require("nvim-tree.api").tree.open()
+
+			-- tillbaka till kodfönstret
+			vim.api.nvim_set_current_win(main_win)
+
+			-- skapa en smal terminal längst till höger om kodfönstret
+			vim.cmd("botright " .. layout_terminal_width .. "vnew")
+			vim.cmd("terminal")
+			vim.cmd("setlocal winfixwidth")
+
+			-- tillbaka till kodfönstret
+			vim.api.nvim_set_current_win(main_win)
+			resize_startup_layout()
+
+		end)
+	end,
+})
+
+vim.api.nvim_create_autocmd({ "BufWinEnter", "WinClosed" }, {
+	group = augroup,
+	callback = function()
+		vim.schedule(resize_startup_layout)
+	end,
+})
+
 -- Autosave
 vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
 	group = augroup,
@@ -548,7 +631,7 @@ require("nvim-web-devicons").setup({
 
 require("nvim-tree").setup({
 	view = {
-		width = 35,
+		width = layout_tree_width,
 	},
 	filters = {
 		dotfiles = false,
@@ -570,6 +653,30 @@ require("nvim-tree").setup({
 				folder = {
 					enable = true,
 					color = true,
+				},
+			},
+		},
+	},
+	actions = {
+		open_file = {
+			resize_window = false,
+			window_picker = {
+				enable = true,
+				picker = function()
+					local code_win = find_code_win()
+					if code_win and vim.api.nvim_win_is_valid(code_win) then
+						return code_win
+					end
+
+					vim.cmd("rightbelow vnew")
+					code_win = vim.api.nvim_get_current_win()
+					vim.wo[code_win].colorcolumn = "140"
+					resize_startup_layout()
+					return code_win
+				end,
+				exclude = {
+					buftype = { "terminal", "help", "nofile" },
+					filetype = { "NvimTree", "notify", "qf" },
 				},
 			},
 		},
