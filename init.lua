@@ -638,6 +638,11 @@ require("nvim-tree").setup({
 	},
 	renderer = {
 		group_empty = true,
+
+		indent_markers = {
+			enable = true,
+		},
+
 		icons = {
 			show = {
 				file = true,
@@ -686,6 +691,18 @@ require("nvim-tree").setup({
 vim.keymap.set("n", "<leader>e", function()
 	require("nvim-tree.api").tree.toggle()
 end, { desc = "Toggle NvimTree" })
+
+vim.api.nvim_create_autocmd("BufEnter", {
+	group = augroup,
+	callback = function(args)
+		if vim.bo[args.buf].filetype == "NvimTree" then
+			vim.schedule(function()
+				vim.opt_local.number = true
+				vim.opt_local.relativenumber = true
+			end)
+		end
+	end,
+})
 
 vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { bg = "none" })
 vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
