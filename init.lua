@@ -692,14 +692,22 @@ vim.keymap.set("n", "<leader>e", function()
 	require("nvim-tree.api").tree.toggle()
 end, { desc = "Toggle NvimTree" })
 
-vim.api.nvim_create_autocmd("BufEnter", {
+vim.api.nvim_create_autocmd("WinEnter", {
 	group = augroup,
-	callback = function(args)
-		if vim.bo[args.buf].filetype == "NvimTree" then
-			vim.schedule(function()
-				vim.opt_local.number = true
-				vim.opt_local.relativenumber = true
-			end)
+	callback = function()
+		if vim.bo.filetype == "NvimTree" then
+			vim.wo.number = true
+			vim.wo.relativenumber = true
+		end
+	end,
+})
+
+vim.api.nvim_create_autocmd("WinLeave", {
+	group = augroup,
+	callback = function()
+		if vim.bo.filetype == "NvimTree" then
+			vim.wo.number = false
+			vim.wo.relativenumber = false
 		end
 	end,
 })
