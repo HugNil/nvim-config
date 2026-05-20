@@ -456,7 +456,13 @@ vim.api.nvim_create_autocmd({ "BufWinEnter", "WinClosed" }, {
 vim.api.nvim_create_autocmd({ "InsertLeave", "TextChanged" }, {
 	group = augroup,
 	callback = function()
-		if vim.bo.modified and vim.fn.expand("%") ~= "" then
+		local file = vim.fn.expand("%:p")
+		if vim.bo.buftype == "" and vim.bo.modified and file ~= "" then
+			local dir = vim.fn.fnamemodify(file, ":h")
+			if vim.fn.isdirectory(dir) == 0 then
+				vim.fn.mkdir(dir, "p")
+			end
+
 			vim.cmd("silent write")
 		end
 	end,
@@ -636,6 +642,16 @@ require("nvim-tree").setup({
 	filters = {
 		dotfiles = false,
 	},
+	filesystem_watchers = {
+		ignore_dirs = function(path)
+			path = path:gsub("\\", "/"):lower()
+			return path:find("/.codex/tmp/", 1, true)
+				or path:find("/node_modules/", 1, true)
+				or path:find("/target/", 1, true)
+				or path:find("/vendor/", 1, true)
+				or path:find("/build/", 1, true)
+		end,
+	},
 	renderer = {
 		group_empty = true,
 
@@ -730,6 +746,157 @@ require("fzf-lua").setup({
 		cmd = "rg --files --hidden --follow -g !.git",
 	},
 })
+
+local project_search_roots = vim.g.project_search_roots or {
+	"~/Programmering",
+	"~/source",
+	"~/Documents",
+	"~/Desktop",
+}
+
+local ignored_project_dirs = {
+	[".cache"] = true,
+	[".git"] = true,
+	[".gradle"] = true,
+	[".idea"] = true,
+	[".venv"] = true,
+	[".vscode"] = true,
+	["node_modules"] = true,
+	["target"] = true,
+	["vendor"] = true,
+}
+
+local function normalize_dir(path)
+	return vim.fs.normalize(vim.fn.fnamemodify(vim.fn.expand(path), ":p")):gsub("[/\\]$", "")
+end
+
+local function shorten_dir(path)
+	local home = normalize_dir("~")
+	if vim.startswith(path, home) then
+		return "~" .. path:sub(#home + 1)
+	end
+
+	return path
+end
+
+local function find_git_projects()
+	local uv = vim.uv or vim.loop
+	local projects = {}
+	local seen = {}
+	local max_depth = 4
+
+	local function add_project(path)
+		path = normalize_dir(path)
+		if not seen[path] then
+			seen[path] = true
+			table.insert(projects, path)
+		end
+	end
+
+	local function scan(path, depth)
+		if depth > max_depth or vim.fn.isdirectory(path) == 0 then
+			return
+		end
+
+		local handle = uv.fs_scandir(path)
+		if not handle then
+			return
+		end
+
+		local dirs = {}
+		while true do
+			local name, kind = uv.fs_scandir_next(handle)
+			if not name then
+				break
+			end
+
+			if name == ".git" then
+				add_project(path)
+				return
+			end
+
+			if kind == "directory" and not ignored_project_dirs[name] then
+				table.insert(dirs, path .. "/" .. name)
+			end
+		end
+
+		for _, dir in ipairs(dirs) do
+			scan(dir, depth + 1)
+		end
+	end
+
+	for _, root in ipairs(project_search_roots) do
+		scan(normalize_dir(root), 0)
+	end
+
+	table.sort(projects, function(a, b)
+		local name_a = vim.fn.fnamemodify(a, ":t"):lower()
+		local name_b = vim.fn.fnamemodify(b, ":t"):lower()
+		if name_a == name_b then
+			return a < b
+		end
+
+		return name_a < name_b
+	end)
+
+	return projects
+end
+
+local function switch_project(project_dir)
+	vim.cmd("cd " .. vim.fn.fnameescape(project_dir))
+	cached_branch = ""
+	last_check = 0
+
+	local ok, tree = pcall(require, "nvim-tree.api")
+	if ok then
+		tree.tree.change_root(project_dir)
+		tree.tree.open()
+	end
+
+	local code_win = find_code_win()
+	if code_win and vim.api.nvim_win_is_valid(code_win) then
+		vim.api.nvim_set_current_win(code_win)
+	end
+
+	resize_startup_layout()
+	vim.notify("Project: " .. shorten_dir(project_dir), vim.log.levels.INFO)
+
+	require("fzf-lua").files({ cwd = project_dir })
+end
+
+local function pick_project()
+	local projects = find_git_projects()
+	if vim.tbl_isempty(projects) then
+		vim.notify("No Git projects found. Edit project_search_roots in init.lua if your projects live elsewhere.", vim.log.levels.WARN)
+		return
+	end
+
+	local project_by_entry = {}
+	local entries = {}
+	for _, project in ipairs(projects) do
+		local entry = string.format("%s\t%s", vim.fn.fnamemodify(project, ":t"), shorten_dir(project))
+		project_by_entry[entry] = project
+		table.insert(entries, entry)
+	end
+
+	require("fzf-lua").fzf_exec(entries, {
+		prompt = "Projects> ",
+		actions = {
+			["default"] = function(selected)
+				local project_dir = project_by_entry[selected[1]]
+				if project_dir then
+					switch_project(project_dir)
+				end
+			end,
+		},
+	})
+end
+
+vim.api.nvim_create_user_command("Projects", pick_project, {
+	desc = "Pick a project and switch Neovim to it",
+})
+
+vim.keymap.set("n", "<leader>fp", pick_project, { desc = "FZF Projects" })
 
 vim.keymap.set("n", "<leader>ff", function()
 	require("fzf-lua").files()
