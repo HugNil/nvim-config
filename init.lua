@@ -52,6 +52,47 @@ end
 vim.cmd.colorscheme("dayfox")
 --set_transparent()
 
+local function apply_soft_highlights()
+	local normal = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+	local bg = normal.bg or 0x101318
+	local r = math.floor(bg / 0x10000) % 0x100
+	local g = math.floor(bg / 0x100) % 0x100
+	local b = bg % 0x100
+	local is_dark = (r * 0.299 + g * 0.587 + b * 0.114) < 128
+
+	local highlights = is_dark
+			and {
+				CursorLine = { bg = "#2a2f38" },
+				CursorLineNr = { fg = "#f4a261", bg = "#2a2f38", bold = true },
+				Visual = { bg = "#34495e" },
+				Search = { fg = "#f4eadc", bg = "#5b4a2f" },
+				IncSearch = { fg = "#101318", bg = "#f4a261" },
+				CurSearch = { fg = "#101318", bg = "#f4a261" },
+				MatchParen = { fg = "#f4eadc", bg = "#34495e", bold = true },
+				NvimTreeCursorLine = { bg = "#2a2f38" },
+				NvimTreeCursorLineNr = { fg = "#f4a261", bg = "#2a2f38", bold = true },
+				NvimTreeIndentMarker = { fg = "#556070" },
+			}
+		or {
+			CursorLine = { bg = "#ebe4dc" },
+			CursorLineNr = { fg = "#b5693a", bg = "#ebe4dc", bold = true },
+			Visual = { bg = "#d8e7f3" },
+			Search = { fg = "#3d2b20", bg = "#f1d28a" },
+			IncSearch = { fg = "#fff8f2", bg = "#b5693a" },
+			CurSearch = { fg = "#fff8f2", bg = "#b5693a" },
+			MatchParen = { fg = "#3d2b20", bg = "#d8e7f3", bold = true },
+			NvimTreeCursorLine = { bg = "#ebe4dc" },
+			NvimTreeCursorLineNr = { fg = "#b5693a", bg = "#ebe4dc", bold = true },
+			NvimTreeIndentMarker = { fg = "#b8ada3" },
+		}
+
+	for group, opts in pairs(highlights) do
+		vim.api.nvim_set_hl(0, group, opts)
+	end
+end
+
+apply_soft_highlights()
+
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_python3_provider = 0
@@ -316,6 +357,62 @@ vim.keymap.set("n", "k", function()
 	return vim.v.count == 0 and "gk" or "k"
 end, { expr = true, silent = true, desc = "Up (wrap-aware)" })
 
+local function jump_to_function(backwards)
+	local filetype = vim.bo.filetype
+	local patterns = {
+		python = { [[^\s*\%(async\s\+\)\?def\s\+]] },
+		lua = { [[^\s*\%(local\s\+\)\?function\s\+]], [[^\s*\k\+\s*=\s*function\s*(]] },
+		javascript = {
+			[[^\s*\%(export\s\+\)\?\%(async\s\+\)\?function\s\+]],
+			[[^\s*\%(export\s\+\)\?\%(const\|let\|var\)\s\+\k\+\s*=.*=>]],
+		},
+		javascriptreact = {
+			[[^\s*\%(export\s\+\)\?\%(async\s\+\)\?function\s\+]],
+			[[^\s*\%(export\s\+\)\?\%(const\|let\|var\)\s\+\k\+\s*=.*=>]],
+		},
+		typescript = {
+			[[^\s*\%(export\s\+\)\?\%(async\s\+\)\?function\s\+]],
+			[[^\s*\%(export\s\+\)\?\%(const\|let\|var\)\s\+\k\+\s*=.*=>]],
+		},
+		typescriptreact = {
+			[[^\s*\%(export\s\+\)\?\%(async\s\+\)\?function\s\+]],
+			[[^\s*\%(export\s\+\)\?\%(const\|let\|var\)\s\+\k\+\s*=.*=>]],
+		},
+	}
+
+	local search_patterns = patterns[filetype] or {
+		[[^\s*\%(async\s\+\)\?def\s\+]],
+		[[^\s*\%(local\s\+\)\?function\s\+]],
+		[[^\s*\%(export\s\+\)\?\%(async\s\+\)\?function\s\+]],
+	}
+	local flags = backwards and "bnW" or "nW"
+	local current_line = vim.fn.line(".")
+	local best_line
+
+	for _, pattern in ipairs(search_patterns) do
+		local pos = vim.fn.searchpos(pattern, flags)
+		local line = pos[1]
+		if line > 0 and line ~= current_line then
+			if not best_line or (backwards and line > best_line) or (not backwards and line < best_line) then
+				best_line = line
+			end
+		end
+	end
+
+	if best_line then
+		vim.api.nvim_win_set_cursor(0, { best_line, 0 })
+		vim.cmd("normal! zz")
+	end
+end
+
+vim.keymap.set("n", "]m", function()
+	jump_to_function(false)
+end, { desc = "Next function" })
+
+vim.keymap.set("n", "[m", function()
+	jump_to_function(true)
+end, { desc = "Previous function" })
+
 vim.keymap.set("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
@@ -369,6 +466,11 @@ vim.keymap.set("t", "<Esc><Esc>", [[<C-\><C-n>]], {
 -- AUTOCMDS
 -- ============================================================================
 local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+	group = augroup,
+	callback = apply_soft_highlights,
+})
 
 vim.opt.splitright = true
 
@@ -1206,13 +1308,13 @@ vim.lsp.config("ts_ls", {})
 do
 	local stylua = require("efmls-configs.formatters.stylua")
 
-	local flake8 = require("efmls-configs.linters.flake8")
+	-- local flake8 = require("efmls-configs.linters.flake8")
 	local black = require("efmls-configs.formatters.black")
 
 	local prettier = require("efmls-configs.formatters.prettier")
-	local eslint_d = require("efmls-configs.linters.eslint_d")
+	-- local eslint_d = require("efmls-configs.linters.eslint_d")
 
-	local shellcheck = require("efmls-configs.linters.shellcheck")
+	-- local shellcheck = require("efmls-configs.linters.shellcheck")
 	local shfmt = require("efmls-configs.formatters.shfmt")
 
 	vim.lsp.config("efm", {
@@ -1235,16 +1337,16 @@ do
 			languages = {
 				css = { prettier },
 				html = { prettier },
-				javascript = { eslint_d, prettier },
-				javascriptreact = { eslint_d, prettier },
+				javascript = { prettier },
+				javascriptreact = { prettier },
 				lua = { stylua },
 				markdown = { prettier },
-				python = { flake8, black },
-				sh = { shellcheck, shfmt },
-				typescript = { eslint_d, prettier },
-				typescriptreact = { eslint_d, prettier },
-				vue = { eslint_d, prettier },
-				svelte = { eslint_d, prettier },
+				python = { black },
+				sh = { shfmt },
+				typescript = { prettier },
+				typescriptreact = { prettier },
+				vue = { prettier },
+				svelte = { prettier },
 			},
 		},
 	})
