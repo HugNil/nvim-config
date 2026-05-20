@@ -372,9 +372,43 @@ local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
 
 vim.opt.splitright = true
 
-local layout_terminal_width = 60
-local layout_code_width = 118
-local layout_tree_width = 30
+local function clamp(value, min, max)
+	return math.max(min, math.min(max, value))
+end
+
+local function calculate_layout_widths()
+	local columns = vim.o.columns
+	local tree_width = clamp(math.floor(columns * 0.16), 24, 36)
+	local terminal_width = clamp(math.floor(columns * 0.28), 32, 64)
+	local min_code_width = 60
+
+	if columns < 120 then
+		tree_width = clamp(math.floor(columns * 0.18), 22, 30)
+		terminal_width = clamp(math.floor(columns * 0.25), 28, 42)
+	end
+
+	if columns < 90 then
+		tree_width = clamp(math.floor(columns * 0.20), 20, 26)
+		terminal_width = clamp(math.floor(columns * 0.22), 24, 34)
+	end
+
+	local overflow = tree_width + terminal_width + min_code_width - columns
+	if overflow > 0 then
+		local terminal_reduction = math.min(overflow, terminal_width - 24)
+		terminal_width = terminal_width - terminal_reduction
+		overflow = overflow - terminal_reduction
+	end
+
+	if overflow > 0 then
+		local tree_reduction = math.min(overflow, tree_width - 20)
+		tree_width = tree_width - tree_reduction
+	end
+
+	return {
+		tree = tree_width,
+		terminal = terminal_width,
+	}
+end
 
 local function is_floating_win(win)
 	return vim.api.nvim_win_get_config(win).relative ~= ""
@@ -399,16 +433,28 @@ local function find_code_win()
 end
 
 local function resize_startup_layout()
+	local widths = calculate_layout_widths()
+	local code_wins = {}
+
+	for _, win in ipairs(vim.api.nvim_list_wins()) do
+		if not is_floating_win(win) and not is_tree_win(win) and not is_terminal_win(win) then
+			table.insert(code_wins, win)
+		end
+	end
+
+	local code_width = math.max(20, math.floor((vim.o.columns - widths.tree - widths.terminal) / math.max(#code_wins, 1)))
+
 	for _, win in ipairs(vim.api.nvim_list_wins()) do
 		if not is_floating_win(win) then
 			if is_tree_win(win) then
-				vim.api.nvim_win_set_width(win, layout_tree_width)
+				pcall(vim.api.nvim_win_set_width, win, widths.tree)
 				vim.wo[win].winfixwidth = true
 			elseif is_terminal_win(win) then
-				vim.api.nvim_win_set_width(win, layout_terminal_width)
+				pcall(vim.api.nvim_win_set_width, win, widths.terminal)
 				vim.wo[win].winfixwidth = true
-			elseif not is_tree_win(win) then
-				vim.api.nvim_win_set_width(win, layout_code_width)
+			else
+				pcall(vim.api.nvim_win_set_width, win, code_width)
+				vim.wo[win].winfixwidth = false
 			end
 		end
 	end
@@ -433,7 +479,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			vim.api.nvim_set_current_win(main_win)
 
 			-- skapa en smal terminal längst till höger om kodfönstret
-			vim.cmd("botright " .. layout_terminal_width .. "vnew")
+			vim.cmd("botright " .. calculate_layout_widths().terminal .. "vnew")
 			vim.cmd("terminal")
 			vim.cmd("setlocal winfixwidth")
 
@@ -445,7 +491,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 	end,
 })
 
-vim.api.nvim_create_autocmd({ "BufWinEnter", "WinClosed" }, {
+vim.api.nvim_create_autocmd({ "BufWinEnter", "WinClosed", "VimResized" }, {
 	group = augroup,
 	callback = function()
 		vim.schedule(resize_startup_layout)
@@ -637,7 +683,10 @@ require("nvim-web-devicons").setup({
 
 require("nvim-tree").setup({
 	view = {
-		width = layout_tree_width,
+		width = function()
+			return calculate_layout_widths().tree
+		end,
+		preserve_window_proportions = true,
 	},
 	filters = {
 		dotfiles = false,
