@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="sv">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,9 +35,7 @@
       padding: 32px 18px 64px;
     }
 
-    header {
-      margin-bottom: 24px;
-    }
+    header { margin-bottom: 24px; }
 
     h1 {
       margin: 0 0 8px;
@@ -51,15 +49,7 @@
       font-size: 1.18rem;
     }
 
-    h3 {
-      margin: 18px 0 8px;
-      color: var(--accent-2);
-      font-size: 1rem;
-    }
-
-    p {
-      margin: 0;
-    }
+    p { margin: 0; }
 
     .subtitle {
       color: var(--muted);
@@ -99,9 +89,7 @@
       font-size: .92rem;
     }
 
-    tr:last-child td {
-      border-bottom: 0;
-    }
+    tr:last-child td { border-bottom: 0; }
 
     code, kbd {
       background: var(--code);
@@ -168,94 +156,94 @@
 <main>
   <header>
     <h1>Neovim Cheat Sheet</h1>
-    <p class="subtitle">För din nuvarande setup. <strong>Leader</strong> = <kbd>Space</kbd>. Projektväljare, responsiv layout, autoskapade mappar och funktionshopp är med.</p>
+    <p class="subtitle">For your current setup. <strong>Leader</strong> = <kbd>Space</kbd>. Includes project switching, responsive layout, automatic directory creation, and function jumping.</p>
   </header>
 
   <section>
-    <h2>Snabbaste workflowet</h2>
+    <h2>Fastest Workflow</h2>
     <div class="cards">
-      <div class="card"><strong>Öppna Neovim var som helst</strong><code>nvim</code></div>
-      <div class="card"><strong>Välj projekt</strong><kbd>Space</kbd> <kbd>f</kbd> <kbd>p</kbd> eller <code>:Projects</code></div>
-      <div class="card"><strong>Hitta fil i projektet</strong><kbd>Space</kbd> <kbd>f</kbd> <kbd>f</kbd></div>
-      <div class="card"><strong>Sök text i projektet</strong><kbd>Space</kbd> <kbd>f</kbd> <kbd>g</kbd></div>
-      <div class="card"><strong>Öppna filträdet</strong><kbd>Space</kbd> <kbd>e</kbd></div>
-      <div class="card"><strong>Öppna terminal</strong><kbd>Space</kbd> <kbd>t</kbd></div>
+      <div class="card"><strong>Open Neovim anywhere</strong><code>nvim</code></div>
+      <div class="card"><strong>Pick a project</strong><kbd>Space</kbd> <kbd>f</kbd> <kbd>p</kbd> or <code>:Projects</code></div>
+      <div class="card"><strong>Find a file in the project</strong><kbd>Space</kbd> <kbd>f</kbd> <kbd>f</kbd></div>
+      <div class="card"><strong>Search text in the project</strong><kbd>Space</kbd> <kbd>f</kbd> <kbd>g</kbd></div>
+      <div class="card"><strong>Open the file tree</strong><kbd>Space</kbd> <kbd>e</kbd></div>
+      <div class="card"><strong>Open the terminal</strong><kbd>Space</kbd> <kbd>t</kbd></div>
     </div>
   </section>
 
   <div class="grid">
     <section>
-      <h2>Rörelse</h2>
+      <h2>Movement</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
-        <tr><td><kbd>h</kbd> <kbd>j</kbd> <kbd>k</kbd> <kbd>l</kbd></td><td>vänster / ner / upp / höger</td></tr>
-        <tr><td><kbd>10j</kbd> / <kbd>10k</kbd></td><td>hoppa 10 rader ner / upp</td></tr>
-        <tr><td><kbd>gg</kbd> / <kbd>G</kbd></td><td>toppen / botten av filen</td></tr>
-        <tr><td><kbd>50G</kbd></td><td>gå direkt till rad 50</td></tr>
-        <tr><td><kbd>w</kbd> / <kbd>b</kbd></td><td>nästa / föregående ord</td></tr>
-        <tr><td><kbd>0</kbd> / <kbd>$</kbd></td><td>början / slutet av raden</td></tr>
-        <tr><td><kbd>Ctrl+d</kbd> / <kbd>Ctrl+u</kbd></td><td>halv sida ner / upp och centrera</td></tr>
-        <tr><td><kbd>]m</kbd> / <kbd>[m</kbd></td><td>nästa / föregående funktion</td></tr>
+        <tr><th>Command</th><th>Does</th></tr>
+        <tr><td><kbd>h</kbd> <kbd>j</kbd> <kbd>k</kbd> <kbd>l</kbd></td><td>left / down / up / right</td></tr>
+        <tr><td><kbd>10j</kbd> / <kbd>10k</kbd></td><td>jump 10 lines down / up</td></tr>
+        <tr><td><kbd>gg</kbd> / <kbd>G</kbd></td><td>top / bottom of the file</td></tr>
+        <tr><td><kbd>50G</kbd></td><td>go directly to line 50</td></tr>
+        <tr><td><kbd>w</kbd> / <kbd>b</kbd></td><td>next / previous word</td></tr>
+        <tr><td><kbd>0</kbd> / <kbd>$</kbd></td><td>start / end of line</td></tr>
+        <tr><td><kbd>Ctrl+d</kbd> / <kbd>Ctrl+u</kbd></td><td>half-page down / up and center</td></tr>
+        <tr><td><kbd>]m</kbd> / <kbd>[m</kbd></td><td>next / previous function</td></tr>
       </table>
     </section>
 
     <section>
       <h2>Modes</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
-        <tr><td><kbd>i</kbd></td><td>insert mode före cursor</td></tr>
-        <tr><td><kbd>a</kbd></td><td>insert mode efter cursor</td></tr>
-        <tr><td><kbd>o</kbd></td><td>ny rad under</td></tr>
+        <tr><th>Command</th><th>Does</th></tr>
+        <tr><td><kbd>i</kbd></td><td>insert mode before the cursor</td></tr>
+        <tr><td><kbd>a</kbd></td><td>insert mode after the cursor</td></tr>
+        <tr><td><kbd>o</kbd></td><td>new line below</td></tr>
         <tr><td><kbd>v</kbd></td><td>visual mode</td></tr>
-        <tr><td><kbd>Esc</kbd></td><td>tillbaka till normal mode</td></tr>
-        <tr><td><kbd>Esc</kbd><kbd>Esc</kbd></td><td>lämna vanlig terminal-mode</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>back to normal mode</td></tr>
+        <tr><td><kbd>Esc</kbd><kbd>Esc</kbd></td><td>leave regular terminal mode</td></tr>
       </table>
     </section>
   </div>
 
   <div class="grid">
     <section>
-      <h2>Filer och mappar</h2>
+      <h2>Files and Directories</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
-        <tr><td><code>:e src/app.py</code></td><td>öppna eller skapa fil relativt projektet</td></tr>
-        <tr><td><code>:w</code></td><td>spara filen</td></tr>
-        <tr><td><code>:pwd</code></td><td>visa nuvarande projekt/root</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>e</kbd></td><td>visa/dölj NvimTree</td></tr>
-        <tr><td><kbd>a</kbd> i NvimTree</td><td>skapa fil eller mapp</td></tr>
-        <tr><td><code>components/</code></td><td>skapa mapp när du tryckt <kbd>a</kbd></td></tr>
-        <tr><td><code>components/Button.tsx</code></td><td>skapa fil i ny eller befintlig mapp</td></tr>
-        <tr><td><kbd>d</kbd> i NvimTree</td><td>ta bort markerad fil eller mapp</td></tr>
-        <tr><td><kbd>r</kbd> i NvimTree</td><td>byt namn</td></tr>
+        <tr><th>Command</th><th>Does</th></tr>
+        <tr><td><code>:e src/app.py</code></td><td>open or create a file relative to the project</td></tr>
+        <tr><td><code>:w</code></td><td>save the file</td></tr>
+        <tr><td><code>:pwd</code></td><td>show the current project/root</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>e</kbd></td><td>show/hide NvimTree</td></tr>
+        <tr><td><kbd>a</kbd> in NvimTree</td><td>create a file or directory</td></tr>
+        <tr><td><code>components/</code></td><td>create a directory after pressing <kbd>a</kbd></td></tr>
+        <tr><td><code>components/Button.tsx</code></td><td>create a file inside a new or existing directory</td></tr>
+        <tr><td><kbd>d</kbd> in NvimTree</td><td>delete the selected file or directory</td></tr>
+        <tr><td><kbd>r</kbd> in NvimTree</td><td>rename</td></tr>
       </table>
-      <p class="note">Autosave skapar föräldramappar automatiskt när du öppnar en ny fil via <code>:e ny-mapp/fil.txt</code>.</p>
+      <p class="note">Autosave creates parent directories automatically when you open a new file with <code>:e new-dir/file.txt</code>.</p>
     </section>
 
     <section>
-      <h2>Projekt och FZF</h2>
+      <h2>Projects and FZF</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
-        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>p</kbd></td><td>välj Git-projekt</td></tr>
-        <tr><td><code>:Projects</code></td><td>samma projektväljare som ovan</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>f</kbd></td><td>hitta filer i nuvarande projekt</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>g</kbd></td><td>live grep / sök text</td></tr>
+        <tr><th>Command</th><th>Does</th></tr>
+        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>p</kbd></td><td>pick a Git project</td></tr>
+        <tr><td><code>:Projects</code></td><td>same project picker as above</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>f</kbd></td><td>find files in the current project</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>g</kbd></td><td>live grep / search text</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>b</kbd></td><td>buffers</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>h</kbd></td><td>help tags</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>x</kbd></td><td>diagnostics i dokument</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>X</kbd></td><td>diagnostics i workspace</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>x</kbd></td><td>diagnostics in the current document</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>X</kbd></td><td>diagnostics in the workspace</td></tr>
       </table>
-      <p class="note">Projektväljaren letar efter Git-repon under <code>~/Programmering</code>, <code>~/source</code>, <code>~/Documents</code> och <code>~/Desktop</code>.</p>
+      <p class="note">The project picker looks for Git repos under <code>~/Programmering</code>, <code>~/source</code>, <code>~/Documents</code>, and <code>~/Desktop</code>.</p>
     </section>
   </div>
 
   <section>
-    <h2>LSP och kodnavigation</h2>
+    <h2>LSP and Code Navigation</h2>
     <table>
-      <tr><th>Kommando</th><th>Gör</th></tr>
+      <tr><th>Command</th><th>Does</th></tr>
       <tr><td><kbd>K</kbd></td><td>hover docs / info under cursor</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>g</kbd> <kbd>d</kbd></td><td>go to definition via FZF</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>g</kbd> <kbd>D</kbd></td><td>go to definition direkt</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>g</kbd> <kbd>S</kbd></td><td>definition i vertical split</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>g</kbd> <kbd>d</kbd></td><td>go to definition through FZF</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>g</kbd> <kbd>D</kbd></td><td>go to definition directly</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>g</kbd> <kbd>S</kbd></td><td>definition in a vertical split</td></tr>
       <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>d</kbd></td><td>definitions</td></tr>
       <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>r</kbd></td><td>references</td></tr>
       <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>i</kbd></td><td>implementations</td></tr>
@@ -264,7 +252,7 @@
       <tr><td><kbd>Space</kbd> <kbd>f</kbd> <kbd>w</kbd></td><td>workspace symbols</td></tr>
       <tr><td><kbd>Space</kbd> <kbd>r</kbd> <kbd>n</kbd></td><td>rename symbol</td></tr>
       <tr><td><kbd>Space</kbd> <kbd>c</kbd> <kbd>a</kbd></td><td>code actions</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>o</kbd> <kbd>i</kbd></td><td>organize imports och format, när servern stödjer det</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>o</kbd> <kbd>i</kbd></td><td>organize imports and format, when the server supports it</td></tr>
     </table>
   </section>
 
@@ -272,54 +260,54 @@
     <section>
       <h2>Diagnostics</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
+        <tr><th>Command</th><th>Does</th></tr>
         <tr><td><kbd>Space</kbd> <kbd>d</kbd></td><td>diagnostics under cursor</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>D</kbd></td><td>diagnostics för hela raden</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>d</kbd> <kbd>l</kbd></td><td>öppna diagnostic float</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>d</kbd></td><td>nästa diagnostic</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>p</kbd> <kbd>d</kbd></td><td>föregående diagnostic</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>q</kbd></td><td>öppna diagnostic list</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>t</kbd> <kbd>d</kbd></td><td>slå på/av diagnostics</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>D</kbd></td><td>diagnostics for the whole line</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>d</kbd> <kbd>l</kbd></td><td>open diagnostic float</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>d</kbd></td><td>next diagnostic</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>p</kbd> <kbd>d</kbd></td><td>previous diagnostic</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>q</kbd></td><td>open diagnostic list</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>t</kbd> <kbd>d</kbd></td><td>toggle diagnostics on/off</td></tr>
       </table>
-      <p class="note">Flake8, eslint_d och shellcheck är bortkommenterade. Pyright/ts_ls/bashls kan fortfarande visa språkserverdiagnostik.</p>
+      <p class="note">Flake8, eslint_d, and shellcheck are commented out. Pyright, ts_ls, and bashls can still show language-server diagnostics.</p>
     </section>
 
     <section>
       <h2>Formatters</h2>
       <table>
-        <tr><th>Språk</th><th>Formatter</th></tr>
+        <tr><th>Language</th><th>Formatter</th></tr>
         <tr><td>Python</td><td><code>black</code></td></tr>
         <tr><td>Lua</td><td><code>stylua</code></td></tr>
         <tr><td>Shell</td><td><code>shfmt</code></td></tr>
         <tr><td>JS/TS/Vue/Svelte/HTML/CSS/Markdown</td><td><code>prettier</code></td></tr>
       </table>
-      <p class="note">Format körs via EFM i din setup, och autosave skriver filen när den ändras.</p>
+      <p class="note">Formatting runs through EFM in your setup, and autosave writes the file when it changes.</p>
     </section>
   </div>
 
   <div class="grid">
     <section>
-      <h2>Buffers och fönster</h2>
+      <h2>Buffers and Windows</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
-        <tr><td><kbd>Space</kbd> <kbd>b</kbd> <kbd>n</kbd></td><td>nästa buffer</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>b</kbd> <kbd>p</kbd></td><td>föregående buffer</td></tr>
-        <tr><td><kbd>Ctrl+h</kbd> <kbd>Ctrl+j</kbd> <kbd>Ctrl+k</kbd> <kbd>Ctrl+l</kbd></td><td>flytta mellan fönster</td></tr>
+        <tr><th>Command</th><th>Does</th></tr>
+        <tr><td><kbd>Space</kbd> <kbd>b</kbd> <kbd>n</kbd></td><td>next buffer</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>b</kbd> <kbd>p</kbd></td><td>previous buffer</td></tr>
+        <tr><td><kbd>Ctrl+h</kbd> <kbd>Ctrl+j</kbd> <kbd>Ctrl+k</kbd> <kbd>Ctrl+l</kbd></td><td>move between windows</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>s</kbd> <kbd>v</kbd></td><td>vertical split</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>s</kbd> <kbd>h</kbd></td><td>horizontal split</td></tr>
-        <tr><td><kbd>Ctrl+Up</kbd> / <kbd>Ctrl+Down</kbd></td><td>ändra höjd</td></tr>
-        <tr><td><kbd>Ctrl+Left</kbd> / <kbd>Ctrl+Right</kbd></td><td>ändra bredd</td></tr>
+        <tr><td><kbd>Ctrl+Up</kbd> / <kbd>Ctrl+Down</kbd></td><td>change height</td></tr>
+        <tr><td><kbd>Ctrl+Left</kbd> / <kbd>Ctrl+Right</kbd></td><td>change width</td></tr>
       </table>
-      <p class="note">Din startlayout är responsiv: NvimTree, kodfönster och terminal anpassas efter terminalens bredd.</p>
+      <p class="note">Your startup layout is responsive: NvimTree, the code window, and the terminal adapt to the terminal width.</p>
     </section>
 
     <section>
       <h2>Terminal</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
-        <tr><td><kbd>Space</kbd> <kbd>t</kbd></td><td>öppna/stäng floating terminal</td></tr>
-        <tr><td><kbd>Esc</kbd> i floating terminal</td><td>stäng terminalfönstret</td></tr>
-        <tr><td><kbd>Esc</kbd><kbd>Esc</kbd> i terminal</td><td>gå från terminal mode till normal mode</td></tr>
+        <tr><th>Command</th><th>Does</th></tr>
+        <tr><td><kbd>Space</kbd> <kbd>t</kbd></td><td>open/close the floating terminal</td></tr>
+        <tr><td><kbd>Esc</kbd> in floating terminal</td><td>close the terminal window</td></tr>
+        <tr><td><kbd>Esc</kbd><kbd>Esc</kbd> in terminal</td><td>leave terminal mode and return to normal mode</td></tr>
       </table>
     </section>
   </div>
@@ -328,8 +316,8 @@
     <section>
       <h2>Git</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
-        <tr><td><kbd>]</kbd><kbd>h</kbd> / <kbd>[</kbd><kbd>h</kbd></td><td>nästa / föregående hunk</td></tr>
+        <tr><th>Command</th><th>Does</th></tr>
+        <tr><td><kbd>]</kbd><kbd>h</kbd> / <kbd>[</kbd><kbd>h</kbd></td><td>next / previous hunk</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>h</kbd> <kbd>s</kbd></td><td>stage hunk</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>h</kbd> <kbd>r</kbd></td><td>reset hunk</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>h</kbd> <kbd>p</kbd></td><td>preview hunk</td></tr>
@@ -340,17 +328,17 @@
     </section>
 
     <section>
-      <h2>Edit shortcuts</h2>
+      <h2>Edit Shortcuts</h2>
       <table>
-        <tr><th>Kommando</th><th>Gör</th></tr>
+        <tr><th>Command</th><th>Does</th></tr>
         <tr><td><kbd>Space</kbd> <kbd>c</kbd></td><td>clear search highlight</td></tr>
-        <tr><td><kbd>n</kbd> / <kbd>N</kbd></td><td>nästa / föregående sökträff och centrera</td></tr>
-        <tr><td><kbd>Alt+j</kbd> / <kbd>Alt+k</kbd></td><td>flytta rad eller visual selection</td></tr>
-        <tr><td><kbd>&lt;</kbd> / <kbd>&gt;</kbd> i visual mode</td><td>indenta och behåll markering</td></tr>
-        <tr><td><kbd>J</kbd></td><td>join lines utan att flytta cursor konstigt</td></tr>
+        <tr><td><kbd>n</kbd> / <kbd>N</kbd></td><td>next / previous search result and center</td></tr>
+        <tr><td><kbd>Alt+j</kbd> / <kbd>Alt+k</kbd></td><td>move line or visual selection</td></tr>
+        <tr><td><kbd>&lt;</kbd> / <kbd>&gt;</kbd> in visual mode</td><td>indent and keep selection</td></tr>
+        <tr><td><kbd>J</kbd></td><td>join lines without moving the cursor awkwardly</td></tr>
         <tr><td><kbd>Space</kbd> <kbd>x</kbd></td><td>delete without yanking</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>p</kbd></td><td>paste without replacing yank</td></tr>
-        <tr><td><kbd>Space</kbd> <kbd>p</kbd> <kbd>a</kbd></td><td>kopiera full filpath</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>p</kbd></td><td>paste without replacing the yank</td></tr>
+        <tr><td><kbd>Space</kbd> <kbd>p</kbd> <kbd>a</kbd></td><td>copy the full file path</td></tr>
       </table>
     </section>
   </div>
@@ -358,15 +346,15 @@
   <section>
     <h2>Obsidian</h2>
     <table>
-      <tr><th>Kommando</th><th>Gör</th></tr>
-      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>n</kbd></td><td>ny note</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>f</kbd></td><td>hitta note</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>s</kbd></td><td>sök notes</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>t</kbd></td><td>dagens note</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>w</kbd></td><td>byt workspace</td></tr>
+      <tr><th>Command</th><th>Does</th></tr>
+      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>n</kbd></td><td>new note</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>f</kbd></td><td>find note</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>s</kbd></td><td>search notes</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>t</kbd></td><td>today's note</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>w</kbd></td><td>switch workspace</td></tr>
       <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>b</kbd></td><td>backlinks</td></tr>
       <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>l</kbd></td><td>links</td></tr>
-      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>o</kbd></td><td>öppna i Obsidian app</td></tr>
+      <tr><td><kbd>Space</kbd> <kbd>n</kbd> <kbd>o</kbd></td><td>open in the Obsidian app</td></tr>
     </table>
   </section>
 </main>
